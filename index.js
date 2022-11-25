@@ -35,7 +35,13 @@ async function run(){
             const products = await productCollection.insertOne(query)
             res.send(products)
         })
-        
+         
+        app.get('/category/:id' , async(req, res)=>{
+            const id = req.params.id
+            const query = {categoryId:id}
+            const product = await productCollection.find(query).toArray()
+            res.send(product)
+        })
 
         app.get('/category', async(req, res)=>{
 
