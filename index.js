@@ -27,6 +27,15 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run(){
     try{
         const categoryCollection = client.db('bookReSale').collection('AllCategory')
+        const productCollection = client.db('bookReSale').collection('Products')
+
+
+        app.post('/products', async(req, res)=>{
+            const query = req.body;
+            const products = await productCollection.insertOne(query)
+            res.send(products)
+        })
+        
 
         app.get('/category', async(req, res)=>{
 
