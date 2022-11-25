@@ -30,7 +30,7 @@ async function run(){
         const productCollection = client.db('bookReSale').collection('Products')
         const bookedCollection = client.db('bookReSale').collection('BookedItem')
 
-        app.post('/booked', async(req, res)=>{
+        app.post('/bookedItem', async(req, res)=>{
             const query = req.body;
             const booked = await bookedCollection.insertOne(query)
             res.send(booked)
