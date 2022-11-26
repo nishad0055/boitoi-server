@@ -36,6 +36,12 @@ async function run(){
             res.send(booked)
         })
 
+        app.get('/allproduct', async(req, res)=>{
+            const query = {}
+            const products = await productCollection.find(query).sort({_id:-1}).limit(6).toArray()
+            res.send(products)
+
+        })
 
         app.post('/products', async(req, res)=>{
             const query = req.body;
