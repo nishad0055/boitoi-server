@@ -30,6 +30,14 @@ async function run(){
         const productCollection = client.db('bookReSale').collection('Products')
         const bookedCollection = client.db('bookReSale').collection('BookedItem')
 
+        app.get('/bookedorder', async(req, res)=>{
+            const email = req.query.email
+            const query = {email:email}
+            const bookings = await bookedCollection.find(query).toArray()
+            res.send(bookings)
+        })
+
+
         app.post('/bookedItem', async(req, res)=>{
             const query = req.body;
             const booked = await bookedCollection.insertOne(query)
