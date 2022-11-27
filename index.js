@@ -48,6 +48,25 @@ async function run(){
             res.send(sellerAddedProduct)
         })
 
+        //admin user_deleted
+        app.delete('/users/:id', async(req, res)=>{
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const result = await usersCollection.deleteOne(filter)
+            res.send(result)
+        })
+
+
+        //seller_deleted_product
+        app.delete('/products/:id', async(req, res)=>{
+
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id)}
+            const result = await productCollection.deleteOne(filter)
+            res.send(result)
+
+        })
+
     //make admin
       app.put('/allusers/admin/:id', async(req, res)=>{
          const id = req.params.id;
@@ -61,6 +80,19 @@ async function run(){
          const result = await usersCollection.updateOne(filter, updatedDoc, option)
          res.send(result)
       })
+  //verify seller
+      app.put('/allsellers/:id', async(req, res)=>{
+         const id = req.params.id;
+         const filter = { _id: ObjectId(id) }
+         const option = { upsert:true}
+         updatedDoc = {
+            $set: {
+                Status: 'verified'
+            }
+         }
+         const result = await usersCollection.updateOne(filter, updatedDoc, option)
+         res.send(result)
+      } )
         
   //admin routes
     app.get('/allusers/admin/:email', async(req, res)=>{
@@ -79,6 +111,22 @@ async function run(){
         const user = await usersCollection.findOne(query)
         res.send({isSeller: user?.role === 'seller'})
       })
+
+    //user_route
+    app.get('/allusers/user/:email', async(req, res)=>{
+        const email = req.params.email
+        const query = { email }
+        const user = await usersCollection.findOne(query)
+        res.send( {isUser: user?.role === 'user'})
+    })
+
+    //verify route 
+    // app.get('/allsellers/verify/:email', async(req, res)=>{
+    //     const email = req.params.email
+    //     const query = {email}
+    //     const user = await usersCollection.findOne(query)
+    //     res.send({isVerified: user?.Status  === 'verified'})
+    // })
 
     //display_user
      app.get('/allusers', async(req, res)=>{
