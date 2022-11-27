@@ -50,7 +50,7 @@ async function run(){
          res.send(result)
       })
         
-
+  //admin routes
     app.get('/allusers/admin/:email', async(req, res)=>{
         const email = req.params.email 
         const query = {email}
@@ -59,13 +59,24 @@ async function run(){
         
     } )
 
+
+     //seller route
+      app.get('/allsellers/seller/:email', async(req, res) =>{
+        const email = req.params.email 
+        const query = {email}
+        const user = await usersCollection.findOne(query)
+        res.send({isSeller: user?.role === 'seller'})
+      })
+
+    //user
      app.get('/allusers', async(req, res)=>{
         
         const query = { role:'user' }
         const alluser = await usersCollection.find(query).toArray()
         res.send(alluser)
      })
-
+    
+     //seller
      app.get('/allsellers', async(req, res)=>{
         const query = { role: 'seller'}
         const allseller = await usersCollection.find(query).toArray()
