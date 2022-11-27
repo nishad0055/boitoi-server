@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
  require('dotenv').config()
 
 
@@ -21,7 +21,6 @@ app.get('/', (req, res)=>{
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.tbf6iah.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri)
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 async function run(){
@@ -29,6 +28,7 @@ async function run(){
         const categoryCollection = client.db('bookReSale').collection('AllCategory')
         const productCollection = client.db('bookReSale').collection('Products')
         const bookedCollection = client.db('bookReSale').collection('BookedItem')
+        const usersCollection = client.db('bookReSale').collection('Users')
 
         app.get('/bookedorder', async(req, res)=>{
             const email = req.query.email
@@ -36,7 +36,40 @@ async function run(){
             const bookings = await bookedCollection.find(query).toArray()
             res.send(bookings)
         })
+        
+      app.put('/allusers/admin/:id', async(req, res)=>{
+         const id = req.params.id;
+         const filter = {_id: ObjectId(id)}
+         const option = {upsert:true}
+         updatedDoc = {
+            $set: {
+                role: 'admin'
+            }
+         }
+         const result = await usersCollection.updateOne(filter, updatedDoc, option)
+         res.send(result)
+      })
+        
+     app.get('/allusers', async(req, res)=>{
+        
+        const query = { role:'user' }
+        const alluser = await usersCollection.find(query).toArray()
+        res.send(alluser)
+     })
 
+     app.get('/allsellers', async(req, res)=>{
+        const query = { role: 'seller'}
+        const allseller = await usersCollection.find(query).toArray()
+        res.send(allseller)
+     })
+
+      app.post('/users', async(req, res)=>{
+
+        const query = req.body;
+        const users = await  usersCollection.insertOne(query)
+        res.send(users)
+
+      })
 
         app.post('/bookedItem', async(req, res)=>{
             const query = req.body;
