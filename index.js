@@ -30,13 +30,25 @@ async function run(){
         const bookedCollection = client.db('bookReSale').collection('BookedItem')
         const usersCollection = client.db('bookReSale').collection('Users')
 
+
+        //user oder
         app.get('/bookedorder', async(req, res)=>{
             const email = req.query.email
             const query = {email:email}
             const bookings = await bookedCollection.find(query).toArray()
             res.send(bookings)
         })
-        
+
+        //seller_add_product_get
+
+        app.get('/seller-added-product', async(req, res)=>{
+            const email = req.query.email
+            const query = {email: email }
+            const sellerAddedProduct = await productCollection.find(query).toArray()
+            res.send(sellerAddedProduct)
+        })
+
+    //make admin
       app.put('/allusers/admin/:id', async(req, res)=>{
          const id = req.params.id;
          const filter = {_id: ObjectId(id)}
@@ -68,7 +80,7 @@ async function run(){
         res.send({isSeller: user?.role === 'seller'})
       })
 
-    //user
+    //display_user
      app.get('/allusers', async(req, res)=>{
         
         const query = { role:'user' }
@@ -76,13 +88,14 @@ async function run(){
         res.send(alluser)
      })
     
-     //seller
+     //display_seller
      app.get('/allsellers', async(req, res)=>{
         const query = { role: 'seller'}
         const allseller = await usersCollection.find(query).toArray()
         res.send(allseller)
      })
 
+     //user data post
       app.post('/users', async(req, res)=>{
 
         const query = req.body;
@@ -91,12 +104,14 @@ async function run(){
 
       })
 
+        //user_booking
         app.post('/bookedItem', async(req, res)=>{
             const query = req.body;
             const booked = await bookedCollection.insertOne(query)
             res.send(booked)
         })
 
+        //latest upload product sorting
         app.get('/allproduct', async(req, res)=>{
             const query = {}
             const products = await productCollection.find(query).sort({_id:-1}).limit(6).toArray()
@@ -104,12 +119,15 @@ async function run(){
 
         })
 
+        //Product_add
         app.post('/products', async(req, res)=>{
             const query = req.body;
             const products = await productCollection.insertOne(query)
             res.send(products)
         })
          
+
+        //category_wise_product_sort
         app.get('/category/:id' , async(req, res)=>{
             const id = req.params.id
             const query = {categoryId:id}
@@ -117,6 +135,7 @@ async function run(){
             res.send(product)
         })
 
+        //category_load
         app.get('/category', async(req, res)=>{
 
             const query = {}
