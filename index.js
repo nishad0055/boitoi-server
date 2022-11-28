@@ -67,6 +67,39 @@ async function run(){
 
         })
 
+        //reported_item Delete
+        app.delete('/reported-product/:id', async(req, res)=>{
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await productCollection.deleteOne(query)
+            res.send(result)
+        })
+
+
+    //add_advertise
+    app.put('/products/:id', async(req, res) =>{
+        const id = req.params.id;
+        const filter = { _id: ObjectId(id) }
+        const option = { upsert: true }
+        updatedDoc = {
+            $set: {
+                advertise: 'advertised'
+            }
+        }
+        const result = await productCollection.updateOne(filter, updatedDoc, option)
+        res.send(result)
+    } )
+    
+    //display _advertise_product
+    app.get('/Adproducts' , async(req, res)=>{
+        const query = {
+            advertise: 'advertised'
+        }
+        const result = await productCollection.find(query).toArray()
+        res.send(result)
+    })
+
+
     //make admin
       app.put('/allusers/admin/:id', async(req, res)=>{
          const id = req.params.id;
@@ -94,6 +127,28 @@ async function run(){
          res.send(result)
       } )
         
+       //Product_reported
+       app.put('/allproduct/:id', async(req, res)=>{
+        const id = req.params.id;
+        const filter = { _id: ObjectId(id) }
+        const option = { upsert:true }
+        updatedDoc = {
+            $set: {
+                report: 'reported'
+            }
+        }
+        const result = await productCollection.updateOne(filter, updatedDoc, option)
+        res.send(result)
+        
+    })
+
+     //display_reported Product
+     app.get('/reported-product', async(req, res)=>{
+        const query = { report: 'reported' }
+        const result = await productCollection.find(query).toArray()
+        res.send(result)
+     } )
+
   //admin routes
     app.get('/allusers/admin/:email', async(req, res)=>{
         const email = req.params.email 
@@ -121,12 +176,12 @@ async function run(){
     })
 
     //verify route 
-    // app.get('/allsellers/verify/:email', async(req, res)=>{
-    //     const email = req.params.email
-    //     const query = {email}
-    //     const user = await usersCollection.findOne(query)
-    //     res.send({isVerified: user?.Status  === 'verified'})
-    // })
+    app.get('/allsellers/verify/:email', async(req, res)=>{
+        const email = req.params.email
+        const query = {email}
+        const user = await usersCollection.findOne(query)
+        res.send({isVerified: user?.Status  === 'verified'})
+    })
 
     //display_user
      app.get('/allusers', async(req, res)=>{
@@ -142,6 +197,9 @@ async function run(){
         const allseller = await usersCollection.find(query).toArray()
         res.send(allseller)
      })
+
+    
+
 
      //user data post
       app.post('/users', async(req, res)=>{
@@ -166,6 +224,10 @@ async function run(){
             res.send(products)
 
         })
+
+
+       
+
 
         //Product_add
         app.post('/products', async(req, res)=>{
